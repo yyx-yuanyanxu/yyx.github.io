@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 编程热点简报 · 2026-10-29</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0e1512;
+      --ink-soft: #2a3832;
+      --muted: #5c6b63;
+      --paper: #f3f6f2;
+      --panel: #e8eee8;
+      --line: #c5d0c7;
+      --accent: #0f7a5a;
+      --accent-deep: #0a5540;
+      --warn: #b45309;
+      --hot: #c2410c;
+      --sky: #0e7490;
+      --glow: rgba(15, 122, 90, 0.12);
+      --radius: 2px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Instrument Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 8% -10%, rgba(14, 116, 144, 0.09), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(15, 122, 90, 0.1), transparent 50%),
+        linear-gradient(180deg, #eef3ef 0%, var(--paper) 28%, #e7ede7 100%);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    .noise {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2.5rem 0 4rem;
+    }
+
+    header.mast {
+      padding: 1.75rem 0 2rem;
+      border-bottom: 1px solid var(--line);
+      animation: rise 0.7s ease both;
+    }
+
+    .kicker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent-deep);
+      background: var(--glow);
+      border: 1px solid rgba(15, 122, 90, 0.25);
+      padding: 0.2rem 0.55rem;
+    }
+
+    .badge::before {
+      content: "";
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 122, 90, 0.2);
+      animation: pulse 2s ease infinite;
+    }
+
+    h1 {
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 600;
+      font-size: clamp(2rem, 5vw, 2.85rem);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--ink);
+      max-width: 18ch;
+    }
+
+    .lede {
+      margin-top: 1rem;
+      max-width: 58ch;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+    }
+
+    .meta-row {
+      margin-top: 1.35rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .meta-row strong { color: var(--ink-soft); font-weight: 600; }
+
+    nav.toc {
+      margin: 1.75rem 0 0;
+      padding: 1rem 0 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.5rem 1rem;
+      animation: rise 0.7s 0.08s ease both;
+    }
+
+    nav.toc a {
+      color: var(--accent-deep);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 0.15rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    nav.toc a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    nav.toc a span {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-right: 0.4rem;
+    }
+
+    .summary {
+      margin: 2rem 0;
+      padding: 1.35rem 1.4rem;
+      background: linear-gradient(135deg, rgba(14, 116, 144, 0.08), rgba(15, 122, 90, 0.06));
+      border-left: 3px solid var(--sky);
+      animation: rise 0.7s 0.12s ease both;
+    }
+
+    .summary h2 {
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--sky);
+      margin-bottom: 0.65rem;
+    }
+
+    .summary p { color: var(--ink-soft); font-size: 0.98rem; }
+
+    .story {
+      margin: 0;
+      padding: 1.75rem 0;
+      border-top: 1px solid var(--line);
+      animation: rise 0.75s ease both;
+    }
+
+    .story:nth-child(1) { animation-delay: 0.15s; }
+    .story:nth-child(2) { animation-delay: 0.2s; }
+    .story:nth-child(3) { animation-delay: 0.25s; }
+    .story:nth-child(4) { animation-delay: 0.3s; }
+    .story:nth-child(5) { animation-delay: 0.35s; }
+    .story:nth-child(6) { animation-delay: 0.4s; }
+    .story:nth-child(7) { animation-delay: 0.45s; }
+
+    .story-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 0.85rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .rank {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.45rem;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .tag.hot {
+      color: var(--hot);
+      border-color: rgba(194, 65, 12, 0.35);
+      background: rgba(194, 65, 12, 0.08);
+    }
+
+    .tag.trend {
+      color: var(--sky);
+      border-color: rgba(14, 116, 144, 0.35);
+      background: rgba(14, 116, 144, 0.08);
+    }
+
+    .tag.tool {
+      color: var(--accent-deep);
+      border-color: rgba(15, 122, 90, 0.35);
+      background: rgba(15, 122, 90, 0.08);
+    }
+
+    .story h3 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+      flex: 1 1 100%;
+    }
+
+    .why {
+      margin: 0.85rem 0 0.6rem;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+    }
+
+    .bullets {
+      margin: 0.75rem 0 0;
+      padding-left: 1.15rem;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    .bullets li { margin: 0.35rem 0; }
+    .bullets li::marker { color: var(--accent); }
+
+    .action {
+      margin-top: 0.9rem;
+      padding: 0.7rem 0.85rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+    }
+
+    .action strong {
+      color: var(--accent-deep);
+      font-weight: 600;
+    }
+
+    .sources {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .sources a {
+      color: var(--sky);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(14, 116, 144, 0.3);
+    }
+
+    .sources a:hover { border-bottom-color: var(--sky); }
+
+    .watch {
+      margin-top: 2rem;
+      padding: 1.5rem 0 0;
+      border-top: 2px solid var(--ink);
+      animation: rise 0.7s 0.5s ease both;
+    }
+
+    .watch h2 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .watch ol {
+      padding-left: 1.25rem;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+    }
+
+    .watch li { margin: 0.55rem 0; padding-left: 0.25rem; }
+    .watch li::marker { font-family: "JetBrains Mono", monospace; color: var(--accent); font-weight: 500; }
+
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.8rem;
+      color: var(--muted);
+      animation: rise 0.7s 0.55s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: calc(100% - 1.25rem); padding-top: 1.5rem; }
+      h1 { max-width: none; }
+      .summary { padding: 1.1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="mast">
+      <div class="kicker">
+        <span class="badge">Live Briefing</span>
+        <span>AI 编程热点</span>
+        <span>2026 · 10 · 29</span>
+      </div>
+      <h1>今天值得盯的 AI 编程信号</h1>
+      <p class="lede">
+        GitHub Universe 刚落幕：模型路由、跨端 Agent Session、以及「Agent 发起 PR」占比跃升，正在把编码助手从补全工具推成交付流水线的一部分。下面是给工程师的精简简报。
+      </p>
+      <div class="meta-row">
+        <span><strong>焦点窗口</strong> 近 72 小时</span>
+        <span><strong>受众</strong> 日常用 Agent / Copilot / Claude Code 的开发者</span>
+        <span><strong>条目</strong> 7 条主线</span>
+      </div>
+      <nav class="toc" aria-label="目录">
+        <a href="#s1"><span>01</span>Copilot Fusion</a>
+        <a href="#s2"><span>02</span>云端 Session / Agent Host</a>
+        <a href="#s3"><span>03</span>Octoverse：40% PR</a>
+        <a href="#s4"><span>04</span>Gemini 4 Carbon</a>
+        <a href="#s5"><span>05</span>Agents-as-Code</a>
+        <a href="#s6"><span>06</span>便宜 Computer Use</a>
+        <a href="#s7"><span>07</span>长会话稳定性</a>
+      </nav>
+    </header>
+
+    <section class="summary">
+      <h2>一句话结论</h2>
+      <p>
+        本周主线不是「又一个更强模型」，而是<strong>谁来选模型、Agent 在哪里跑、PR 生命周期里人还要站多深</strong>。GitHub 用 Fusion + 云 Session + Agentic Workflows 把这三件事一次性推到了生产可用；Cursor / Claude / Vercel 则在同一方向上补齐「Agent 当代码管」。
+      </p>
+    </section>
+
+    <main>
+      <article class="story" id="s1">
+        <div class="story-head">
+          <span class="rank">01</span>
+          <span class="tag hot">今日头条</span>
+          <span class="tag">GitHub Universe</span>
+          <h3>Copilot Fusion 正式 GA：别再手选模型了</h3>
+        </div>
+        <p class="why">
+          GitHub 让 Copilot Fusion 对全计划开放：你选努力程度（Standard / High / Max），系统按推理、写码、调试、工具调用自动路由与编排模型。
+        </p>
+        <ul class="bullets">
+          <li>官方称 Fusion Max 在 Artificial Analysis Coding Agent Index 上接近 Claude Opus 5.5 Max，成本约一半、单任务耗时约少 40%。</li>
+          <li>付费计划限时享 Fusion 模型费用约 30% 折扣——适合拿真实工作负载做一周账单对照。</li>
+          <li>「选哪个模型」正在变成「愿意花多少算力」的产品问题。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>若团队还在靠人手切模型，本周用 Fusion 跑一批真实 PR / 重构任务，对比质量和账单。</p>
+        <p class="sources">来源：
+          <a href="https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/" target="_blank" rel="noopener">GitHub Universe 2026</a> ·
+          <a href="https://topfive.ai/2026/10/29/" target="_blank" rel="noopener">TopFive 10/29</a>
+        </p>
+      </article>
+
+      <article class="story" id="s2">
+        <div class="story-head">
+          <span class="rank">02</span>
+          <span class="tag hot">工作流</span>
+          <span class="tag">VS Code</span>
+          <h3>云端 Session + Agent Host：Agent 不再绑在你的编辑器窗口上</h3>
+        </div>
+        <p class="why">
+          Universe 发布把「会话连续性」做成默认体验：手机站立会启动云 Agent，桌上 VS Code 接管，午饭在 github.com 查看——同一 session 跨客户端接力。
+        </p>
+        <ul class="bullets">
+          <li>Agent Host 把会话从单个 VS Code 窗口解耦，关文件夹 / 关窗口仍可后台跑。</li>
+          <li>支持 Remote SSH / Dev Tunnel：Agent 可跑在另一台机器上。</li>
+          <li>实验性 Computer Use：Agent 可操作本机桌面应用（需逐应用授权）。</li>
+          <li>开放 Agent Host Protocol（AHP），可用 TS / Rust / Go 等自建客户端接入同一会话。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>评估是否要把长任务迁到 cloud session；企业侧先确认 Computer Use / Marketplace 策略。</p>
+        <p class="sources">来源：
+          <a href="https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/" target="_blank" rel="noopener">Copilot in VS Code Changelog</a>
+        </p>
+      </article>
+
+      <article class="story" id="s3">
+        <div class="story-head">
+          <span class="rank">03</span>
+          <span class="tag trend">数据信号</span>
+          <span class="tag">Octoverse</span>
+          <h3>Agent 发起的 PR 已超 40%：交付链路真的换了</h3>
+        </div>
+        <p class="why">
+          GitHub Octoverse 称 9 月由 Agent 发起的 Pull Request 占比超过 40%（3 月约 17%）。同时 Agentic Workflows GA、Agent Merge 进入 PR 页，开始自动修 CI 失败与合并冲突。
+        </p>
+        <ul class="bullets">
+          <li>Agentic Workflows：自然语言 Markdown 编译成标准 Actions YAML，复用现有 runner 与策略。</li>
+          <li>Agent Merge：在 PR 上监视并修复 blocker，可与 auto-merge 叠加。</li>
+          <li>「人审意图、Agent 收尾」从实验变成可治理的默认选项。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>给一个低风险仓库试点 Agentic Workflows + Agent Merge；先锁只读默认与防火墙策略，再谈全仓开启。</p>
+        <p class="sources">来源：
+          <a href="https://www.agentmaps.org/timeline/archive/2026-10/" target="_blank" rel="noopener">AgentMaps Oct 2026</a> ·
+          <a href="https://thenextweb.com/news/github-universe-copilot-fusion-octoverse-agents" target="_blank" rel="noopener">The Next Web</a>
+        </p>
+      </article>
+
+      <article class="story" id="s4">
+        <div class="story-head">
+          <span class="rank">04</span>
+          <span class="tag hot">模型</span>
+          <span class="tag">Google</span>
+          <h3>Gemini 4 Carbon：最强模型先给安全方，开发者暂不可用</h3>
+        </div>
+        <p class="why">
+          Google 称 Carbon 为其最强模型，并优先开放给部分网络安全防护方；普通开发者与消费者尚无 API。SEC-bench Pro 88.2%、CWE-bench 71% 等数字显示其面向漏洞发现与修复。
+        </p>
+        <ul class="bullets">
+          <li>引入价约 $2 / $10 per M tokens；正式价预期更高（报道约 $4 / $20）。</li>
+          <li>「榜首模型先给防御方」成为新发布范式——能力越强，开放越慢。</li>
+          <li>日常工程仍应继续基于 Gemini 4 Argon 做规划。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>安全团队可关注 Fairwind / 防御方准入；应用团队先别把路线图绑在 Carbon 上。</p>
+        <p class="sources">来源：
+          <a href="https://topfive.ai/2026/10/29/" target="_blank" rel="noopener">TopFive</a> ·
+          <a href="https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-thursday-october-29-2026/" target="_blank" rel="noopener">The Neuron</a>
+        </p>
+      </article>
+
+      <article class="story" id="s5">
+        <div class="story-head">
+          <span class="rank">05</span>
+          <span class="tag tool">生态</span>
+          <span class="tag">Agents-as-Code</span>
+          <h3>Agent 当代码管：Cursor SDK、Glean Headless、Vercel fx</h3>
+        </div>
+        <p class="why">
+          「在 Dashboard 里写 Prompt」正在被「文件夹 + 评测 + CI + 触发器」取代。Cursor Agent SDK 已 GA；Glean 支持在 Claude Code / Cursor / Codex 里 headless 构建；Vercel 开源 coding agent fx 已内置进 T3 Code。
+        </p>
+        <ul class="bullets">
+          <li>Cursor：用 <code>instructions.md</code> + typed tools + MCP 定义 Agent，可对 PR/CI/Slack/cron 唤醒，可用 <code>agent-sdk eval</code> 评测。</li>
+          <li>Glean：在 IDE 旁写 <code>spec.yaml</code>，发布到同一受治理运行时。</li>
+          <li>fx × T3 Code：Supervised / Auto 模式，跨 web / desktop / mobile 管 coding agent。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>把现有 review / triage bot 迁到「可版本化的 Agent 定义」；至少加一条基于真实 PR 的回归评测。</p>
+        <p class="sources">来源：
+          <a href="https://programmingtheloop.com/news/2026-10-27/" target="_blank" rel="noopener">Programming the Loop</a> ·
+          <a href="https://dropagentic.com/vercel-fx-coding-agent-t3-code/" target="_blank" rel="noopener">Drop Agentic</a>
+        </p>
+      </article>
+
+      <article class="story" id="s6">
+        <div class="story-head">
+          <span class="rank">06</span>
+          <span class="tag tool">成本</span>
+          <span class="tag">OpenAI</span>
+          <h3>GPT-6.1 Terra：半价 Computer Use，适合高吞吐自动化</h3>
+        </div>
+        <p class="why">
+          OpenAI 发布面向 computer use / 视觉推理 / 写作的快速便宜模型，API 约 $1 / M input，Terminal-Bench 4.0（max）约 50.3%，约为上代 Terra 的两倍。
+        </p>
+        <ul class="bullets">
+          <li>已进入 ChatGPT Work 与 Codex（付费档）。</li>
+          <li>1.05M 上下文；工具调用走 Responses API。</li>
+          <li>最难编码任务官方仍建议 GPT-6.1 Sol 或 GPT-6 Astra。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>重新核算搁置中的 UI / 表单自动化 Agent 成本；硬核 coding 仍保留更强模型预算。</p>
+        <p class="sources">来源：
+          <a href="https://programmingtheloop.com/news/2026-10-27/" target="_blank" rel="noopener">Programming the Loop · 10/27</a>
+        </p>
+      </article>
+
+      <article class="story" id="s7">
+        <div class="story-head">
+          <span class="rank">07</span>
+          <span class="tag tool">可靠性</span>
+          <span class="tag">Claude Code</span>
+          <h3>长会话与无人值守：Claude Code 修的是「会挂」这件事</h3>
+        </div>
+        <p class="why">
+          Claude Code 2.1.311 解决超 200K token 标准上下文后被迫升 1M 的打断问题（改为 compact 后继续），并修复 MCP 晚连、不可重试请求死循环，以及自托管 runner 的 idle hold。
+        </p>
+        <ul class="bullets">
+          <li>对过夜跑、CI runner、多 subagent 任务更关键。</li>
+          <li>与 GitHub 云 Session、Cursor 触发器同一主题：无人值守必须先不挂。</li>
+        </ul>
+        <p class="action"><strong>行动：</strong>跑 Claude Code 长会话 / self-hosted runner 的同学直接升级；检查是否有因假重试而空烧的任务。</p>
+        <p class="sources">来源：
+          <a href="https://programmingtheloop.com/news/2026-10-27/" target="_blank" rel="noopener">Programming the Loop</a>
+        </p>
+      </article>
+    </main>
+
+    <section class="watch">
+      <h2>本周建议盯的三件事</h2>
+      <ol>
+        <li><strong>把「选模型」改成「选努力程度」</strong>——用 Fusion（或等价路由）做一周真实任务 A/B，用账单和质量说话。</li>
+        <li><strong>给 Agent 一条可治理的交付路径</strong>——从 Agentic Workflows / Agent Merge / Cursor SDK 里挑一个试点，先覆盖 CI 失败修复或 PR triage。</li>
+        <li><strong>别把路线图赌在「未开放的榜首模型」上</strong>——Carbon 式发布会越来越多；产品与成本规划仍应建立在可调用的模型上。</li>
+      </ol>
+    </section>
+
+    <footer>
+      <p>报告生成于 2026-10-29 · 综合 GitHub Changelog、TopFive、The Neuron、Programming the Loop、AgentMaps 等公开来源。</p>
+      <p style="margin-top:0.4rem">信息可能随官方文档更新；落地前请以厂商 changelog / 政策页为准。</p>
+    </footer>
+  </div>
+</body>
+</html>
